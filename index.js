@@ -25,6 +25,7 @@ async function run(){
         const toolCollection = client.db('de_walt').collection('tools')
         const reviewCollection = client.db('de_walt').collection('reviews')
         const orderCollection= client.db('de_walt').collection('orders')
+        const profileCollection= client.db('de_walt').collection('profile')
 //getting all tools
         app.get('/tool' , async(req,res)=>{
             const query = {}
@@ -41,7 +42,22 @@ async function run(){
         const result = await toolCollection.findOne(query)
         res.send(result)
       })
- 
+ //updating available quantity
+
+ app.put('/tool/:_id' , async(req,res)=>{
+   const id = req.params._id
+   const newQuantity = req.body
+   const filter = { _id: ObjectId(id) }
+   const options = { upsert: true }
+   const doc = {
+    $set: {
+       availableQuantity: newQuantity.availableQuantity
+    }
+  }
+  const result = await toolCollection.updateOne(filter, doc, options)
+  res.send(result)
+
+ })
         
  //getting all reviews       
         app.get('/review' , async(req,res)=>{
@@ -54,14 +70,24 @@ async function run(){
    
    app.post('/order', async(req,res)=>{
      const order = req.body
-     const query = {userEmail:order.userEmail,userName:order.userName,phone:order.phone,address:order.address}
-     const exist = await orderCollection.findOne(query)
-     if(exist){
-      return res.send({ success: false, order: exist })
-     }
+    //  const query = {userEmail:order.userEmail,userName:order.userName,phone:order.phone,address:order.address}
+    //  const exist = await orderCollection.findOne(query)
+    //  if(exist){
+    //   return res.send({ success: false, order: exist })
+    //  }
      const result = await orderCollection.insertOne(order)
-    return res.send({success:true,result})
+     res.send({success:true,result})
    })
+
+//inserting profile collection
+
+app.post('/profile' , async(req,res)=>{
+  const profile= req.body
+  const result = await profileCollection.insertOne(profile)
+  res.send({success:true,result})
+})
+
+
     }
     finally{
 
