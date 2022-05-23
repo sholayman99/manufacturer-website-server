@@ -88,6 +88,16 @@ app.post('/profile' , async(req,res)=>{
 })
 
 
+
+//getting review
+
+app.post('/review' , async(req,res)=>{
+  const review = req.body
+  const result = await reviewCollection.insertOne(review)
+  res.send({success:true,result})
+})
+
+
     }
     finally{
 
