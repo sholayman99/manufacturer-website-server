@@ -79,6 +79,16 @@ async function run(){
      res.send({success:true,result})
    })
 
+   //getting order
+
+   app.get('/order' , async(req,res)=>{
+     const email = req.query.email
+     const query = {userEmail:email}
+     const cursor =  orderCollection.find(query)
+     const order =  await cursor.toArray()
+     res.send(order)
+   })
+
 //inserting profile collection
 
 app.post('/profile' , async(req,res)=>{
