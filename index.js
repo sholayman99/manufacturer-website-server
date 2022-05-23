@@ -3,6 +3,7 @@ const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
 
@@ -70,8 +71,8 @@ async function run(){
     $set: user,
   };
   const result = await userCollection.updateOne(filter, updateDoc, options);
-  // const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
-  res.send({result});
+  const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' })
+  res.send({result,token});
 });
 
 
