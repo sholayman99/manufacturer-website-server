@@ -44,22 +44,29 @@ async function run(){
         const result = await toolCollection.findOne(query)
         res.send(result)
       })
+
+ //posting tool
+ app.post('/tool', async(req,res)=>{
+   const tool = req.body
+   const result = await toolCollection.insertOne(tool)
+   res.send({success:true,result})
+ })     
  //updating available quantity
 
- app.put('/tool/:_id' , async(req,res)=>{
-   const id = req.params._id
-   const newQuantity = req.body
-   const filter = { _id: ObjectId(id) }
-   const options = { upsert: true }
-   const doc = {
-    $set: {
-       availableQuantity: newQuantity.availableQuantity
-    }
-  }
-  const result = await toolCollection.updateOne(filter, doc, options)
-  res.send(result)
+//  app.put('/tool/:_id' , async(req,res)=>{
+//    const id = req.params._id
+//    const newQuantity = req.body
+//    const filter = { _id: ObjectId(id) }
+//    const options = { upsert: true }
+//    const doc = {
+//     $set: {
+//        availableQuantity: newQuantity.availableQuantity
+//     }
+//   }
+//   const result = await toolCollection.updateOne(filter, doc, options)
+//   res.send(result)
 
- })
+//  })
 
  //updating user
  app.put('/user/:email', async (req, res) => {
@@ -94,6 +101,15 @@ app.put('/user/admin/:email', async (req, res) => {
   res.send(result);
 })
 
+//getting api for admin
+
+app.get('/admin/:email', async (req, res) => {
+  const email = req.params.email;
+  const user = await userCollection.findOne({ email: email });
+  const isAdmin = user.role === 'admin';
+  res.send({ admin: isAdmin })
+})
+
 
 
         
@@ -104,7 +120,7 @@ app.put('/user/admin/:email', async (req, res) => {
             const reviews = await cursor.toArray()
             res.send(reviews)
         })
-   //getting order
+   //posting order
    
    app.post('/order', async(req,res)=>{
      const order = req.body
