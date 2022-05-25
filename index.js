@@ -3,6 +3,8 @@ const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000
 const cors = require('cors');
+const stripe = require('stripe')('sk_test_51L0jrBAox4HLroFQsf7sYTngMc0i2De1BaERGCgERmFLZKsnC9ANR9LJ9PIx3NxmOA2oaQKF3GEKTONATjKvl81h00O0HUCbH5');
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
@@ -35,6 +37,32 @@ async function run(){
             const tools = await cursor.toArray()
             res.send(tools)
         })
+//payment intent
+// app.post('/create-payment-intent', async(req, res) =>{
+//   const service = req.body;
+//   const price = service.order.price;
+//   console.log(price)
+//   const amount = price*100;
+//   const paymentIntent = await stripe.paymentIntents.create({
+//     amount : amount,
+//     currency: 'usd',
+//     payment_method_types:['card']
+//   });
+//   res.send({clientSecret: paymentIntent.client_secret})
+// });        
+
+app.post('/create-payment-intent' , async(req,res)=>{
+  const tool = req.body
+  const price = tool.totalPrice
+  const amount = 100* price
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount : amount,
+    currency: 'usd',
+     payment_method_types:['card']
+  })
+  res.send({clientSecret:paymentIntent.client_secret})
+
+})
 
 //getting one tool
 
@@ -143,6 +171,14 @@ app.get('/admin/:email', async (req, res) => {
      res.send(order)
    })
 
+   app.get('/order/:id', async(req, res) =>{
+    const id = req.params.id;
+    const query = {_id: ObjectId(id)};
+    const order = await orderCollection.findOne(query);
+    res.send(order);
+  })
+
+
 //inserting profile collection
 
 app.post('/profile' , async(req,res)=>{
@@ -150,6 +186,9 @@ app.post('/profile' , async(req,res)=>{
   const result = await profileCollection.insertOne(profile)
   res.send({success:true,result})
 })
+
+//updating profile
+
 
 
 //updating profile
