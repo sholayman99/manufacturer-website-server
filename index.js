@@ -30,6 +30,7 @@ async function run(){
         const orderCollection= client.db('de_walt').collection('orders')
         const profileCollection= client.db('de_walt').collection('profile')
         const userCollection = client.db('de_walt').collection('users');
+        const paymentCollection = client.db('de_walt').collection('payments');
 //getting all tools
         app.get('/tool' , async(req,res)=>{
             const query = {}
@@ -127,6 +128,23 @@ app.put('/user/admin/:email', async (req, res) => {
   };
   const result = await userCollection.updateOne(filter, updateDoc);
   res.send(result);
+})
+//updating order
+
+app.patch('/order/:id', async(req, res) =>{
+  const id  = req.params.id;
+  const payment = req.body;
+  const filter = {_id: ObjectId(id)};
+  const updatedDoc = {
+    $set: {
+      paid: true,
+      transactionId: payment.transactionId
+    }
+  }
+
+  const result = await paymentCollection.insertOne(payment);
+  const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
+  res.send(updatedOrder);
 })
 
 //getting api for admin
