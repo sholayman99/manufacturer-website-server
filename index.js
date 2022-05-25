@@ -38,6 +38,15 @@ async function run(){
             const tools = await cursor.toArray()
             res.send(tools)
         })
+
+ //deleting tool
+ 
+ app.delete('/tool/:id', async(req,res)=>{
+      const id = req.params.id
+      const query = {_id:ObjectId(id)}
+      const result = await toolCollection.deleteOne(query)
+      res.send(result)
+ })
 //payment intent
 // app.post('/create-payment-intent', async(req, res) =>{
 //   const service = req.body;
@@ -228,6 +237,14 @@ app.post('/review' , async(req,res)=>{
   const review = req.body
   const result = await reviewCollection.insertOne(review)
   res.send({success:true,result})
+})
+
+
+app.delete('/order/:id' , async(req,res)=>{
+  const id = req.params.id
+  const query = {_id:ObjectId(id)}
+  const result = await orderCollection.deleteOne(query)
+  res.send(result)
 })
 
 
