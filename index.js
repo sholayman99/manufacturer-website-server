@@ -189,6 +189,13 @@ app.get('/admin/:email', async (req, res) => {
      res.send(order)
    })
 
+   app.get('/allOrder', async(req,res)=>{
+    const query = {}
+    const cursor= orderCollection.find(query)
+    const orders = await cursor.toArray()
+    res.send(orders)
+   })
+
    app.get('/order/:id', async(req, res) =>{
     const id = req.params.id;
     const query = {_id: ObjectId(id)};
