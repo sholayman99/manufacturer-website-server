@@ -3,7 +3,7 @@ const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-const toolsRouter = require("./routes/tools.route") ;
+const toolsRouter = require("./routes/v1/tools.route") ;
 const stripe = require("stripe")(
   "sk_test_51L0jrBAox4HLroFQsf7sYTngMc0i2De1BaERGCgERmFLZKsnC9ANR9LJ9PIx3NxmOA2oaQKF3GEKTONATjKvl81h00O0HUCbH5"
 );
@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 dbConnect()
-app.use("/tools" , toolsRouter)
+app.use("/api/v1/tools" , toolsRouter)
 
 async function run() {
   try {
@@ -268,6 +268,10 @@ run().catch(console.dir);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
+});
+
+app.all("*" , (req,res) =>{
+  res.send("No route found")
 });
 
 app.listen(port, () => {
